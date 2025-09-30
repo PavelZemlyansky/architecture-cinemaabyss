@@ -137,18 +137,6 @@ services:
       - cinemaabyss-network
 
 
-  producer:
-    build:
-      context: ./src/microservices/producer
-      dockerfile: Dockerfile
-    container_name: producer-service
-    depends_on:
-      - kafka
-    ports:
-      - "8101:8101"
-    networks:
-      - cinemaabyss-network
-
 volumes:
   postgres-data:
 
