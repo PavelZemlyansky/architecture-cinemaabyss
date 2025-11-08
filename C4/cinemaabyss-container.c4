@@ -1,6 +1,6 @@
 @startuml
 
-!include /home/kishjar/Documents/Heatseeker/C4_Container.puml
+!include ./C4templates/C4_Container.puml
 
 Person_Ext(pc, PC, "PC client")
 Person_Ext(mobile, Mobile, "Mobile client")
