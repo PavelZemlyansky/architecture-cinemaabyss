@@ -46,6 +46,7 @@ def forward_request(target_url):
         method=method,
         url=original_url,
         headers=headers,
+        data=request.get_data(),
         allow_redirects=False,
         stream=True
     )
