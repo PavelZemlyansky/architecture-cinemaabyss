@@ -3,10 +3,13 @@ name: Docker Build and Push
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main, master  ]
     paths:
       - 'src/**'
       - '.github/workflows/docker-build-push.yml'
+  workflow_run:
+    workflows: ["API Tests"]
+    types: [completed]
   release:
     types: [published]
 
@@ -23,7 +26,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
