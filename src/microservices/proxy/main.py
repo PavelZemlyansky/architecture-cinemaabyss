@@ -27,8 +27,15 @@ def proxy_movies():
     return forward_request(target_url)
 
 @app.route('/api/users', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def proxy_events():
-    # Always forward to the events server
+def proxy_users():
+    return forward_request(MONOLITH)
+
+@app.route('/api/payments', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def proxy_payments():
+    return forward_request(MONOLITH)
+
+@app.route('/api/subscriptions', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def proxy_subs():
     return forward_request(MONOLITH)
 
 @app.route('/health')
@@ -46,6 +53,7 @@ def forward_request(target_url):
         method=method,
         url=original_url,
         headers=headers,
+        data=request.get_data(),
         allow_redirects=False,
         stream=True
     )

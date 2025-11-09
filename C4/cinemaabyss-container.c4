@@ -1,0 +1,59 @@
+@startuml
+
+!include ./C4templates/C4_Container.puml
+
+Person_Ext(pc, PC, "PC client")
+Person_Ext(mobile, Mobile, "Mobile client")
+Person_Ext(smarttv, SmartTV, "Smart TV client")
+Person_Ext(mrktg, SalesMarketing, "Analytics web client")
+
+System_Ext(paymentgw, "Payments", "Payment gateway")
+System_Ext(S3, "S3 Storage", "Moovies cloud storage")
+System_Ext(recs, "Recommendations", "Recommendations system")
+System_Ext(cinema, "Online-Cinema", "Online cinema partners")
+
+
+System_Boundary(c1, "CinemaAbyss") {
+    Container(pcback, "Web Backend", "Go", "Backend для web-клиентов")
+    Container(mobileback, "Mobile-Backend", "Go", "Backend для мобильных клиентов")
+    Container(tvback, "Smart-TV-Backend", "Go", "Backend для SmartTV-клиентов")
+    Container(kafka, "Kafka cluster", "Kafka", "Кластер Kafka")
+    Container(users, "Users", "Go", "Микросервис управления пользователями")
+    Container(moovies, "Moovies", "Go", "Микросервис управления фильмами")
+    Container(meta, "Moovies-metadata", "Go", "Микросервис управления метаданными")
+    Container(pay, "Payment service", "Go", "Микросервис управления платежами")
+    Container(subs, "Subscription service", "Go", "Микросервис управления подписками")
+    Container(analytics, "Analytic service", "Go", "Микросервис выгрузки аналитики")   
+    ContainerDb(database1, "PostgreSQL relation DBMS", "PostgreSQL", "Хранение сущностей")
+    ContainerDb(clickhouse, "Clickhouse OLAP DBMS", "Clickhouse", "Хранение данных для аналитики")
+    
+}
+
+
+Rel(pc, pcback, "Use", "HTTPS")
+Rel(mobile, mobileback, "Use", "HTTPS")
+Rel(smarttv, tvback, "Use", "HTTPS")
+Rel(pcback, kafka, "Use", "Kafka")
+Rel(mobileback, kafka, "Use", "Kafka")
+Rel(tvback, kafka, "Use", "Kafka")
+Rel(pay, paymentgw, "Make payments", "HTTPS")
+Rel(moovies, S3, "Store moovie files", "HTTPS")
+Rel(moovies, cinema, "Get links", "HTTPS")
+Rel(mrktg, analytics, "Use", "HTTPS")
+Rel(analytics, clickhouse, "Get data", "Clickhouse Wire")
+Rel(kafka, clickhouse, "Data streaming", "Kafka")
+Rel(kafka, users, "Auth, manage users", "Kafka")
+Rel(kafka, moovies, "CRUD moovies", "Kafka")
+Rel(kafka, meta, "CRUD moovies meta-data", "Kafka")
+Rel(kafka, pay, "Make payments", "Kafka")
+Rel(kafka, subs, "Manage subscriptions", "Kafka")
+Rel(users, recs, "Get recommendations", "Rabbit MQ")
+Rel(users, database1, "Store data", "PostgreSQL")
+Rel(moovies, database1, "Store data", "PostgreSQL")
+Rel(meta, database1, "Store data", "PostgreSQL")
+Rel(pay, database1, "Store data", "PostgreSQL")
+Rel(subs, database1, "Store data", "PostgreSQL")
+
+
+
+@enduml
